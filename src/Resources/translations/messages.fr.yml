@@ -1,0 +1,9 @@
+bouteg:
+    payfip_plugin:
+        form:
+          payment_method:
+            environment: Environment
+            client_number: Numéro client
+            env_test: Test
+            env_activation: Activation
+            env_production: Production

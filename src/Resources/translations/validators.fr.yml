@@ -1,0 +1,7 @@
+bouteg:
+  payfip_plugin:
+    payment_method:
+      client_number:
+        not_blank: Veuillez entrer le  numéro client
+      environment:
+        not_blank: Veuillez renseigner un environnement

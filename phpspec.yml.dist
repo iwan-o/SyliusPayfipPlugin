@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Bouteg\PayfipPlugin
+        psr4_prefix: Bouteg\PayfipPlugin

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="bouteg.bouteg_payfip_payment" class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
+            <argument>Bouteg\PayfipPlugin\Payum\SyliusPaymentGatewayFactory</argument>
+            <tag name="payum.gateway_factory_builder" factory="bouteg_payfip_payment" />
+        </service>
+        <service id="Bouteg\PayfipPlugin\Form\Type\SyliusGatewayConfigurationType">
+            <tag name="sylius.gateway_configuration_type" type="bouteg_payfip_payment" label="Payfip payment" />
+            <tag name="form.type" />
+        </service>
+        <service id="Bouteg\PayfipPlugin\Payum\Action\CaptureAction" public="true">
+            <argument type="service" id="sylius.http_client" />
+            <tag name="payum.action" factory="bouteg_payfip_payment" alias="payum.action.capture" />
+        </service>
+    </services>
+</container>
