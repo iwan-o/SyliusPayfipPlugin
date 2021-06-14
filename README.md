@@ -1,36 +1,39 @@
-<p align="center">
-    <a href="https://sylius.com" target="_blank">
-        <img src="https://demo.sylius.com/assets/shop/img/logo.png" />
-    </a>
-</p>
+<h1 align="center">Bouteg Payfip Plugin</h1>
 
-<h1 align="center">Plugin Skeleton</h1>
+<p align="center">DGFIP Payfip payment plugin for Sylius applications.</p>
 
-<p align="center">Skeleton for starting Sylius plugins.</p>
+## Requirements
 
-## Documentation
+  - Install openssl 
+  
+  - php soap + php xml rpc
 
-For a comprehensive guide on Sylius Plugins development please go to Sylius documentation,
-there you will find the <a href="https://docs.sylius.com/en/latest/plugin-development-guide/index.html">Plugin Development Guide</a>, that is full of examples.
+    ```bash
+    $ sudo apt-get install php7.3-soap php7.3-xmlrpc
+    $ sudo service apache2 restart
+    ```
 
-## Quickstart Installation
 
-1. Run `composer create-project sylius/plugin-skeleton ProjectName`.
+## Installation
 
-2. From the plugin skeleton root directory, run the following commands:
+Run `composer require bouteg/payfip-plugin`
+
+## Dev
+
+  - Run `git clone git@github.com:iwan-o/SyliusPayfipPlugin.git`
+
+  - From the plugin skeleton root directory, run the following commands:
 
     ```bash
     $ (cd tests/Application && yarn install)
     $ (cd tests/Application && yarn build)
     $ (cd tests/Application && bin/console assets:install public -e test)
-    
+      
     $ (cd tests/Application && bin/console doctrine:database:create -e test)
     $ (cd tests/Application && bin/console doctrine:schema:create -e test)
     ```
 
 To be able to setup a plugin's database, remember to configure you database credentials in `tests/Application/.env` and `tests/Application/.env.test`.
-
-## Usage
 
 ### Running plugin tests
 
