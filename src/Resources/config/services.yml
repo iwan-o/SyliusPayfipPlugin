@@ -22,12 +22,6 @@ services:
         tags:
             - { name: payum.action, factory: bouteg_payfip_payment , alias: payum.action.capture }
 
-    bouteg.bouteg_payfip_payment.action.convert_payment:
-        class: Bouteg\PayfipPlugin\Payum\Action\ConvertPaymentAction
-        public: true
-        tags:
-            - { name: payum.action, factory: bouteg_payfip_payment, alias: payum.action.convert_payment }
-
     bouteg.bouteg_payfip_payment.action.notify:
         class: Bouteg\PayfipPlugin\Payum\Action\NotifyAction
         public: true
