@@ -129,11 +129,11 @@ final class PayfipApi
 
             throw new \Exception('Invalid xml data');
 
-        } else if( 0 !== $xmlResponse && $xmlResponse->getElementsByTagName('FonctionnelleErreur')->length && $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue == 'P5') {
+        } else if( 0 !== $xmlResponse->getElementsByTagName('FonctionnelleErreur')->length && $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue == 'P5') {
             
             return self::STATUS_CREATED;
 
-        } else if( 0 !== $xmlResponse && $xmlResponse->getElementsByTagName('recupererDetailPaiementSecuriseResponse')->length ) {
+        } else if( 0 !== $xmlResponse->getElementsByTagName('recupererDetailPaiementSecuriseResponse')->length ) {
 
             if( $idOp == $xmlResponse->getElementsByTagName('idop')->item(0)->nodeValue ) {
 
