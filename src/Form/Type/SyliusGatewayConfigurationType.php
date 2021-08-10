@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Form\Type;
 
-use Bouteg\PayfipPlugin\Payum\PayfipApi;
+use Bouteg\PayfipPlugin\Bridge\PayfipApi;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 final class SyliusGatewayConfigurationType extends AbstractType
 {
@@ -42,6 +44,14 @@ final class SyliusGatewayConfigurationType extends AbstractType
                         ]
                     ),
                 ],
-            ]);
+            ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $data = $event->getData();
+
+                $data['payum.http_client'] = '@bouteg.bouteg_payfip_payment.payfip_api_bridge';
+
+                $event->setData($data);
+            })
+            ;
     }
 }

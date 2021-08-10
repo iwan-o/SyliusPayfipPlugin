@@ -1,0 +1,3 @@
+bouteg:
+    payfip_plugin:
+      creation_failed: Une erreur est survenue pendant l'initialisation de votre paiement. Veuillez réessayer ou choisir un autre moyen de paiement.

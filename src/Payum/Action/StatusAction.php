@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Payum\Action;
 
+use Bouteg\PayfipPlugin\Bridge\PayfipApi;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\GetStatusInterface;
@@ -20,27 +21,43 @@ final class StatusAction implements ActionInterface
 
         $details = $payment->getDetails();
 
-        if (!isset($details['status'])) {
+        if (!isset($details[PayfipApi::DETAILS_IDOP]) || !isset($details[PayfipApi::DETAILS_STATUS])) {
             $request->markNew();
 
             return;
         }
 
-        if (200 === $details['status']) {
+        if (PayfipApi::STATUS_CREATED === $details[PayfipApi::DETAILS_STATUS]) {
+            $request->markPending();
+
+            return;
+        }
+
+        if (PayfipApi::STATUS_PAID === $details[PayfipApi::DETAILS_STATUS]) {
             $request->markCaptured();
 
             return;
         }
 
-        if (400 === $details['status']) {
+        if (PayfipApi::STATUS_FAILED === $details[PayfipApi::DETAILS_STATUS]) {
             $request->markFailed();
 
             return;
         }
+
+        if (PayfipApi::STATUS_CANCELED === $details[PayfipApi::DETAILS_STATUS]) {
+            $request->markCanceled();
+
+            return;
+        }
+
     }
 
     public function supports($request): bool
     {
-        return $request instanceof GetStatusInterface && $request->getFirstModel() instanceof SyliusPaymentInterface;
+        return 
+            $request instanceof GetStatusInterface && 
+            $request->getModel() instanceof SyliusPaymentInterface
+        ;
     }
 }

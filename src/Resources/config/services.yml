@@ -1,0 +1,46 @@
+services:
+    bouteg.bouteg_payfip_payment:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments:
+            - Bouteg\PayfipPlugin\Payum\SyliusPaymentGatewayFactory
+        tags:
+            - { name: payum.gateway_factory_builder, factory: bouteg_payfip_payment }
+
+    bouteg.bouteg_payfip_payment.gateway_configuration_type:
+        class: Bouteg\PayfipPlugin\Form\Type\SyliusGatewayConfigurationType
+        tags:
+            - { name: sylius.gateway_configuration_type, type: bouteg_payfip_payment , label: "Payfip payment" }
+            - { name: form.type }
+
+    bouteg.bouteg_payfip_payment.action.capture:
+        class: Bouteg\PayfipPlugin\Payum\Action\CaptureAction
+        public: true
+        arguments: 
+            - "@payum"
+            - "@monolog.logger"
+            - "@session"
+        tags:
+            - { name: payum.action, factory: bouteg_payfip_payment , alias: payum.action.capture }
+
+    bouteg.bouteg_payfip_payment.action.convert_payment:
+        class: Bouteg\PayfipPlugin\Payum\Action\ConvertPaymentAction
+        public: true
+        tags:
+            - { name: payum.action, factory: bouteg_payfip_payment, alias: payum.action.convert_payment }
+
+    bouteg.bouteg_payfip_payment.action.notify:
+        class: Bouteg\PayfipPlugin\Payum\Action\NotifyAction
+        public: true
+        arguments:
+            - "@monolog.logger"
+        tags:
+            - { name: payum.action, factory: bouteg_payfip_payment, alias: payum.action.notify }
+
+    bouteg.bouteg_payfip_payment.payfip_api_bridge:
+        class: Bouteg\PayfipPlugin\Bridge\PayfipApi
+        public: true
+        arguments:
+            - "@sylius.http_client"
+            - "%bouteg_payfip.url_api_endpoint%"
+            - "%bouteg_payfip.url_api_paiement%"
+            - "%bouteg_payfip.xml_body_CreerPaiementSecurise%"

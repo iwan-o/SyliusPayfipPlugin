@@ -1,0 +1,22 @@
+parameters:
+    bouteg_payfip.url_api_endpoint: 'https://www.payfip.gouv.fr/tpa/services/securite'
+    bouteg_payfip.url_api_paiement: 'https://www.payfip.gouv.fr/tpa/paiementws.web?idop='
+    bouteg_payfip.xml_body_CreerPaiementSecurise:  |
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pai="http://securite.service.tpa.cp.finances.gouv.fr/services/mas_securite/contrat_paiement_securise/PaiementSecuriseService">
+            <soapenv:Header/>
+            <soapenv:Body>
+            <pai:creerPaiementSecurise>
+                <arg0>
+                    <exer></exer>
+                    <mel></mel>
+                    <montant></montant>
+                    <numcli></numcli>
+                    <objet>Paiement</objet>
+                    <refdet></refdet>
+                    <saisie></saisie>
+                    <urlnotif></urlnotif>
+                    <urlredirect></urlredirect>
+                </arg0>
+            </pai:creerPaiementSecurise>
+            </soapenv:Body>
+        </soapenv:Envelope>
