@@ -70,7 +70,7 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
         
         } catch (\Exception $exception){
 
-            $this->logger->error("Payfip payment notify error : {$exception->getMessage()} ({$exception->getCode()})");
+            $this->logger->critical("Payfip payment notify error : {$exception->getMessage()} ({$exception->getCode()})");
 
             throw new HttpResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST); 
 

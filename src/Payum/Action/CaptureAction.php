@@ -69,7 +69,7 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
 
         } catch (\Exception $e) {
 
-            $this->logger->error("Payfip payment creation failed : " . $e->getMessage());
+            $this->logger->critical("Payfip payment creation failed : " . $e->getMessage());
 
             $this->addErrorFlash();
  
