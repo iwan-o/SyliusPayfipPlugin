@@ -16,7 +16,6 @@ final class SyliusPaymentGatewayFactory extends GatewayFactory
             'payum.factory_name' => 'bouteg_payfip_payment',
             'payum.factory_title' => 'Payfip payment',
             'payum.http_client' => '@bouteg.bouteg_payfip_payment.payfip_api_bridge',
-            'payum.action.status' => new StatusAction(),
         ]);
 
         if (false == $config['payum.api']) {

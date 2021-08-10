@@ -15,7 +15,7 @@
 Use Composer to install the plugin :
 
 ```
-composer require bouteg/payfip-plugin
+$ composer require bouteg/payfip-plugin
 ```
 
 Add plugin dependencies to your `config/bundles.php` file :
@@ -26,10 +26,15 @@ return [
 ];
 ```
 
+Clear cache :
+
+```
+$ php bin/console cache:clear
+```
 
 ## Usage
 
 - Go to the Payment Methods admin page and choose to create a new "Payfip payment" method. 
 - Choose a name & a code for the method.
-- Grab your client id from the DGFIP and paste it into the appropriate fields. 
+- Grab your client number from the DGFIP and paste it into the appropriate fields. 
 - Set the mode to Test if you want to first test the integration with a fake credit card.
