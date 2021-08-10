@@ -9,3 +9,7 @@
 
 /behat.yml
 /phpspec.yml
+
+###< More ###
+*.code-workspace
+.DS_Store
