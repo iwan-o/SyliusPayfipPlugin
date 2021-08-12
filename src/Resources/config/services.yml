@@ -43,4 +43,5 @@ services:
             - "@sylius.http_client"
             - "%bouteg_payfip.url_api_endpoint%"
             - "%bouteg_payfip.url_api_paiement%"
-            - "%bouteg_payfip.xml_body_CreerPaiementSecurise%"
+            - "%bouteg_payfip.xml_body_creerPaiementSecurise%"
+            - "%bouteg_payfip.xml_body_recupererDetailPaiementSecurise%"

@@ -67,6 +67,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $details[PayfipApi::DETAILS_IDOP] = $this->api->creerPaiementSecurise($request, $notifyToken);
             $details[PayfipApi::DETAILS_STATUS] = PayfipApi::STATUS_CREATED;
 
+            $payment->setDetails($details);
+
         } catch (\Exception $e) {
 
             $this->logger->critical("Payfip payment creation failed : " . $e->getMessage());
@@ -76,8 +78,6 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             throw new HttpRedirect($token->getAfterUrl());
 
         }
-
-        $payment->setDetails($details);
 
         throw new HttpRedirect($this->api->generateUrlPaiement($details[PayfipApi::DETAILS_IDOP]));
    

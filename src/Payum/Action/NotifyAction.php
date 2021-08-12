@@ -9,10 +9,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Exception\UnsupportedApiException;
-use Payum\Core\GatewayAwareInterface;
-use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpResponse;
-use Payum\Core\Request\GetHttpRequest;
 use Payum\Core\Request\Notify;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
@@ -20,17 +17,13 @@ use Webmozart\Assert\Assert;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @author Patryk Drapik <patryk.drapik@bitbag.pl>
- */
-final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
+final class NotifyAction implements ActionInterface, ApiAwareInterface
 {
-    use GatewayAwareTrait;
 
-    /**
-     * @var MercanetBnpParibasBridgeInterface
+    /** 
+     * @var PayfipApi
      */
-    private $mercanetBnpParibasBridge;
+    private $api;
 
     /**
      * @var LoggerInterface
@@ -60,23 +53,23 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
 
         $details = $payment->getDetails();
 
-        $this->gateway->execute($httpRequest = new GetHttpRequest());
-
         try {
 
-            $status = $this->api->paymentNotify($httpRequest->content, $details[PayfipApi::DETAILS_IDOP]);
+            $status = $this->api->recupererDetailPaiementSecurise($details[PayfipApi::DETAILS_IDOP]);
 
-            $details[PayfipApi::DETAILS_STATUS] = $status;
+            if( null !== $status) {
+
+                $details[PayfipApi::DETAILS_STATUS] = $status;
+
+                $payment->setDetails($details);
+                
+            }
         
         } catch (\Exception $exception){
 
             $this->logger->critical("Payfip payment notify error : {$exception->getMessage()} ({$exception->getCode()})");
 
-            throw new HttpResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST); 
-
         }
-
-        $payment->setDetails($details);
 
         throw new HttpResponse(null, Response::HTTP_OK);
 

@@ -11,7 +11,7 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
-final class PayfipApi
+class PayfipApi
 {
     const ENV_TEST = 'T';
     const ENV_ACTIVATION = 'X';
@@ -51,12 +51,13 @@ final class PayfipApi
      */
     private $domDocumentCreerPaiementSecurise;
 
-    public function __construct(Client $client, string $urlEndpoint, string $urlPaiement, string $xmlBodyCreerPaiementSecurise)
+    public function __construct(Client $client, string $urlEndpoint, string $urlPaiement, string $xmlBodyCreerPaiementSecurise, string $xmlBodyRecupererDetailPaiementSecurise)
     {
         $this->client = $client;
         $this->urlEndpoint = $urlEndpoint;
         $this->urlPaiement = $urlPaiement;
         $this->domDocumentCreerPaiementSecurise = $this->stringToDOMDocument($xmlBodyCreerPaiementSecurise);
+        $this->domDocumentRecupererDetailPaiementSecurise = $this->stringToDOMDocument($xmlBodyRecupererDetailPaiementSecurise);
     }
 
     public function setConfig(string $clientNumber, string $environment): void 
@@ -78,15 +79,11 @@ final class PayfipApi
 
             $xmlResponse = $this->stringToDOMDocument($response->getBody()->getContents());
 
-            if(null === $xmlResponse ) {
-                throw new \Exception('Invalid xml data : ' . $response);
-            }
-
             $idOp = $xmlResponse->getElementsByTagName('idOp')->item(0)->nodeValue;
 
         } catch (RequestException $e) {
             if( null !== $e->getResponse() ) {
-                throw new PayfipApiException($e->getResponse()->getBody()->getContents());
+                throw new PayfipApiException($e->getResponse()->getBody()->getContents(), $e->getCode());
             } else {
                 throw new \Exception($e->getMessage(), $e->getCode());
             }
@@ -120,34 +117,52 @@ final class PayfipApi
 
     }
 
-    public function paymentNotify(string $response, string $idOp): string
+    public function recupererDetailPaiementSecurise(string $idOp): string
     {
 
-        $xmlResponse = $this->stringToDOMDocument($response);
+        $staus = null;
 
-        if(null === $xmlResponse ) {
+        $body = $this->prepareRecupererDetailPaiementSecurise($idOp);
 
-            throw new \Exception('Invalid xml data : ' . $response);
+        try {
 
-        } else if( 0 !== $xmlResponse->getElementsByTagName('FonctionnelleErreur')->length && $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue == 'P5') {
+            $response = $this->client->post($this->urlEndpoint, ['body' => $body]);
+
+            $xmlResponse = $this->stringToDOMDocument($response->getBody()->getContents());
+
+            $staus = $xmlResponse->getElementsByTagName('resultrans')->item(0)->nodeValue;
             
-            return self::STATUS_CREATED;
+        } catch (RequestException $e) {
 
-        } else if( 0 !== $xmlResponse->getElementsByTagName('recupererDetailPaiementSecuriseResponse')->length ) {
+            if( null !== $e->getResponse() ) {
 
-            if( $idOp == $xmlResponse->getElementsByTagName('idop')->item(0)->nodeValue ) {
+                $payfipApiException = new PayfipApiException($e->getResponse()->getBody()->getContents(), $e->getCode());
 
-                return $xmlResponse->getElementsByTagName('resultrans')->item(0)->nodeValue;
+                if($payfipApiException->getErrorCode() !== 'P5') {
 
-            } else  {
+                    throw $payfipApiException;
+                }
 
-                throw new \Exception('Invalid idOp');
+            } else {
+
+                throw new \Exception($e->getMessage(), $e->getCode());
+
             }
 
-        } else {
-
-            throw new \Exception('Unable to parse xml data');
         }
+
+        return $staus;
+
+    }
+
+    private function prepareRecupererDetailPaiementSecurise($idop): string
+    {
+
+        $xml = $this->domDocumentRecupererDetailPaiementSecurise->cloneNode(true);
+
+        $xml->getElementsByTagName('idOp')->item(0)->nodeValue = $idop;
+
+        return $xml->saveXML();
 
     }
 
@@ -156,16 +171,18 @@ final class PayfipApi
         return $this->urlPaiement . $idop;  
     }
 
-    private function stringToDOMDocument($text): ?\DOMDocument
+    private function stringToDOMDocument($text): \DOMDocument
     {
 
         $xml = new \DOMDocument();
 
         if ( @$xml->loadXML($text) === false ) {
-            return null;
-        } else {
-            return $xml;
-        }
+            
+            throw new \Exception('Invalid xml data : ' . $text);
+
+        } 
+        
+        return $xml;
 
     }
 

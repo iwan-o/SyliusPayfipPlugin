@@ -4,29 +4,51 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Bridge\Exception;
 
+use Doctrine\ORM\Query\Expr\Func;
+
 class PayfipApiException extends \Exception
 {
 
-    public function __construct(string $response)
+    /** @var string */
+    private $errorCode;
+
+    /** @var string */
+    private $errorLibelle;
+
+    public function __construct(string $response, $code)
     {
 
+        $this->initErrorInfos($response);
+
+        if( null !== $this->errorCode && null !== $this->errorLibelle ) {
+
+            $message = 'Code : ' . $this->errorCode . ', libelle : ' . $this->errorLibelle;
+
+        } else {
+
+            $message = $response;
+
+        }
+
+        parent::__construct($message, $code);
+        
+    }
+
+    private function initErrorInfos(string $response): void 
+    {
         $xmlResponse = $this->parseResponse($response);
 
         if( null !== $xmlResponse && 0 !== $xmlResponse && $xmlResponse->getElementsByTagName('code')->length ) {
 
-            $message = 'Code : ' . $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue . ', libelle : ' . $xmlResponse->getElementsByTagName('libelle')->item(0)->nodeValue;
+            $this->errorCode =  $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue;
+            $this->errorLibelle =  $xmlResponse->getElementsByTagName('libelle')->item(0)->nodeValue;
         
         } else if( null !== $xmlResponse && 0 !== $xmlResponse && $xmlResponse->getElementsByTagName('faultcode')->length ) {
 
-            $message = 'Code : ' . $xmlResponse->getElementsByTagName('faultcode')->item(0)->nodeValue . ', libelle : ' . $xmlResponse->getElementsByTagName('faultstring')->item(0)->nodeValue;
-        
-        } else  {
+            $this->errorCode =  $xmlResponse->getElementsByTagName('faultcode')->item(0)->nodeValue;
+            $this->errorLibelle =  $xmlResponse->getElementsByTagName('faultstring')->item(0)->nodeValue;
 
-            $message = $response;
         }
-
-        parent::__construct($message, 400);
-        
     }
 
     private function parseResponse($response): ?\DOMDocument 
@@ -40,6 +62,16 @@ class PayfipApiException extends \Exception
             return $xmlResponse;
         }
 
+    }
+
+    public function getErrorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
+    public function getErrorLibelle(): ?string
+    {
+        return $this->errorLibelle;
     }
     
 }
