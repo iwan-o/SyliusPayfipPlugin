@@ -11,7 +11,7 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
-class PayfipApi
+final class PayfipApi
 {
     const ENV_TEST = 'T';
     const ENV_ACTIVATION = 'X';
@@ -25,9 +25,7 @@ class PayfipApi
     const STATUS_CANCELED = 'A';
     const STATUS_FAILED = 'R';
 
-    /** 
-     * @var Client 
-     */
+    /** @var Client */
     private $client;
 
     /** @var string */
@@ -36,19 +34,13 @@ class PayfipApi
     /** @var string */
     private $environment;
 
-    /** 
-     * @var string
-     */
+    /** @var string */
     private $urlEndpoint;
 
-    /** 
-     * @var string
-     */
+    /** @var string */
     private $urlPaiement;
 
-    /** 
-     * @var \DOMDocument 
-     */
+    /** @var \DOMDocument */
     private $domDocumentCreerPaiementSecurise;
 
     public function __construct(Client $client, string $urlEndpoint, string $urlPaiement, string $xmlBodyCreerPaiementSecurise, string $xmlBodyRecupererDetailPaiementSecurise)
