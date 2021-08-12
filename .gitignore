@@ -11,5 +11,5 @@
 /phpspec.yml
 
 ###< More ###
-*.code-workspace
+bouteg-payfip-plugin.code-workspace
 .DS_Store

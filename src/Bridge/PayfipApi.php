@@ -79,7 +79,7 @@ final class PayfipApi
             $xmlResponse = $this->stringToDOMDocument($response->getBody()->getContents());
 
             if(null === $xmlResponse ) {
-                throw new \Exception('Invalid xml data');
+                throw new \Exception('Invalid xml data : ' . $response);
             }
 
             $idOp = $xmlResponse->getElementsByTagName('idOp')->item(0)->nodeValue;
@@ -127,7 +127,7 @@ final class PayfipApi
 
         if(null === $xmlResponse ) {
 
-            throw new \Exception('Invalid xml data');
+            throw new \Exception('Invalid xml data : ' . $response);
 
         } else if( 0 !== $xmlResponse->getElementsByTagName('FonctionnelleErreur')->length && $xmlResponse->getElementsByTagName('code')->item(0)->nodeValue == 'P5') {
             
