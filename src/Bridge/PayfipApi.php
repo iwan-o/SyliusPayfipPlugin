@@ -7,7 +7,6 @@ namespace Bouteg\PayfipPlugin\Bridge;
 use Bouteg\PayfipPlugin\Bridge\Exception\PayfipApiException;
 use Bouteg\PayfipPlugin\Bridge\Models\XmlModel;
 use Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequestInterface;
-use Bouteg\PayfipPlugin\Bridge\Models\PayfipApiInterface;
 use Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Payum\Action;
 
-use Bouteg\PayfipPlugin\Bridge\PayfipApi;
+use Bouteg\PayfipPlugin\Bridge\PayfipApiInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\GetStatusInterface;
@@ -21,31 +21,31 @@ final class StatusAction implements ActionInterface
 
         $details = $payment->getDetails();
 
-        if (!isset($details[PayfipApi::DETAILS_IDOP]) || !isset($details[PayfipApi::DETAILS_STATUS])) {
+        if (!isset($details[PayfipApiInterface::DETAILS_IDOP]) || !isset($details[PayfipApiInterface::DETAILS_STATUS])) {
             $request->markNew();
 
             return;
         }
 
-        if (PayfipApi::STATUS_CREATED === $details[PayfipApi::DETAILS_STATUS]) {
+        if (PayfipApiInterface::STATUS_CREATED === $details[PayfipApiInterface::DETAILS_STATUS]) {
             $request->markPending();
 
             return;
         }
 
-        if (PayfipApi::STATUS_PAID === $details[PayfipApi::DETAILS_STATUS]) {
+        if (PayfipApiInterface::STATUS_PAID === $details[PayfipApiInterface::DETAILS_STATUS]) {
             $request->markCaptured();
 
             return;
         }
 
-        if (PayfipApi::STATUS_FAILED === $details[PayfipApi::DETAILS_STATUS]) {
+        if (PayfipApiInterface::STATUS_FAILED === $details[PayfipApiInterface::DETAILS_STATUS]) {
             $request->markFailed();
 
             return;
         }
 
-        if (PayfipApi::STATUS_CANCELED === $details[PayfipApi::DETAILS_STATUS]) {
+        if (PayfipApiInterface::STATUS_CANCELED === $details[PayfipApiInterface::DETAILS_STATUS]) {
             $request->markCanceled();
 
             return;

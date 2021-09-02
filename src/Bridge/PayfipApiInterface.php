@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bouteg\PayfipPlugin\Bridge\Models;
+namespace Bouteg\PayfipPlugin\Bridge;
 
 use Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequestInterface;
 use Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequestInterface;
@@ -12,17 +12,18 @@ use Payum\Core\Security\TokenInterface;
 
 interface PayfipApiInterface
 {
-    const ENV_TEST = 'T';
-    const ENV_ACTIVATION = 'X';
-    const ENV_PRODUCTION = 'W';
+    public const STORAGE_BOOLEAN = 'boolean';
+    public const ENV_TEST = 'T';
+    public const ENV_ACTIVATION = 'X';
+    public const ENV_PRODUCTION = 'W';
 
-    const DETAILS_IDOP = 'idOp';
-    const DETAILS_STATUS = 'status';
+    public const DETAILS_IDOP = 'idOp';
+    public const DETAILS_STATUS = 'status';
 
-    const STATUS_CREATED = 'C';
-    const STATUS_PAID = 'P';
-    const STATUS_CANCELED = 'A';
-    const STATUS_FAILED = 'R';
+    public const STATUS_CREATED = 'C';
+    public const STATUS_PAID = 'P';
+    public const STATUS_CANCELED = 'A';
+    public const STATUS_FAILED = 'R';
 
     public function __construct(
         Client $client, 

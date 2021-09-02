@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Payum\Action;
 
-use Bouteg\PayfipPlugin\Bridge\PayfipApi;
+use Bouteg\PayfipPlugin\Bridge\PayfipApiInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -64,8 +64,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
 
         try {
 
-            $details[PayfipApi::DETAILS_IDOP] = $this->api->creerPaiementSecurise($request, $notifyToken);
-            $details[PayfipApi::DETAILS_STATUS] = PayfipApi::STATUS_CREATED;
+            $details[PayfipApiInterface::DETAILS_IDOP] = $this->api->creerPaiementSecurise($request, $notifyToken);
+            $details[PayfipApiInterface::DETAILS_STATUS] = PayfipApiInterface::STATUS_CREATED;
 
             $payment->setDetails($details);
 
@@ -79,7 +79,7 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
 
         }
 
-        throw new HttpRedirect($this->api->generateUrlPaiement($details[PayfipApi::DETAILS_IDOP]));
+        throw new HttpRedirect($this->api->generateUrlPaiement($details[PayfipApiInterface::DETAILS_IDOP]));
    
     }
 
@@ -93,8 +93,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
 
     public function setApi($api): void
     {
-        if (!$api instanceof PayfipApi) {
-            throw new UnsupportedApiException('Not supported. Expected an instance of ' . PayfipApi::class);
+        if (!$api instanceof PayfipApiInterface) {
+            throw new UnsupportedApiException('Not supported. Expected an instance of ' . PayfipApiInterface::class);
         }
 
         $this->api = $api;
