@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bouteg\PayfipPlugin\Bridge\Models;
 
-class XmlModel
+class XmlModel implements XmlModelInterface
 {
 
     /** @var \DOMDocument */

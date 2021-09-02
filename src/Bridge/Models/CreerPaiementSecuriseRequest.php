@@ -8,7 +8,7 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
-class CreerPaiementSecuriseRequest extends XmlModel
+class CreerPaiementSecuriseRequest extends XmlModel implements CreerPaiementSecuriseRequestInterface
 {
 
     public function populate(string $clientNumber, string $environment, Capture $request, TokenInterface $notifyToken): void

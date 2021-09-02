@@ -6,27 +6,16 @@ namespace Bouteg\PayfipPlugin\Bridge;
 
 use Bouteg\PayfipPlugin\Bridge\Exception\PayfipApiException;
 use Bouteg\PayfipPlugin\Bridge\Models\XmlModel;
-use Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequest;
-use Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequest;
+use Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequestInterface;
+use Bouteg\PayfipPlugin\Bridge\Models\PayfipApiInterface;
+use Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
-use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
-final class PayfipApi
+final class PayfipApi implements PayfipApiInterface
 {
-    const ENV_TEST = 'T';
-    const ENV_ACTIVATION = 'X';
-    const ENV_PRODUCTION = 'W';
-
-    const DETAILS_IDOP = 'idOp';
-    const DETAILS_STATUS = 'status';
-
-    const STATUS_CREATED = 'C';
-    const STATUS_PAID = 'P';
-    const STATUS_CANCELED = 'A';
-    const STATUS_FAILED = 'R';
 
     /** @var Client */
     private $client;
@@ -43,18 +32,18 @@ final class PayfipApi
     /** @var string */
     private $urlPaiement;
 
-    /** @var CreerPaiementSecuriseRequest */
+    /** @var CreerPaiementSecuriseRequestInterface */
     private $creerPaiementSecuriseRequest;
 
-    /** @var RecupererDetailPaiementSecuriseRequest */
+    /** @var RecupererDetailPaiementSecuriseRequestInterface */
     private $recupererDetailPaiementSecuriseRequest;
 
     public function __construct(
         Client $client, 
         string $urlEndpoint, 
         string $urlPaiement, 
-        CreerPaiementSecuriseRequest $creerPaiementSecuriseRequest, 
-        RecupererDetailPaiementSecuriseRequest $recupererDetailPaiementSecuriseRequest
+        CreerPaiementSecuriseRequestInterface $creerPaiementSecuriseRequest, 
+        RecupererDetailPaiementSecuriseRequestInterface $recupererDetailPaiementSecuriseRequest
         )
     {
         $this->client = $client;
