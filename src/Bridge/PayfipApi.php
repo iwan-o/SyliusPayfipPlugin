@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Bouteg\PayfipPlugin\Bridge;
 
 use Bouteg\PayfipPlugin\Bridge\Exception\PayfipApiException;
+use Bouteg\PayfipPlugin\Bridge\Models\XmlModel;
+use Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequest;
+use Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Request\Capture;
@@ -40,16 +43,25 @@ final class PayfipApi
     /** @var string */
     private $urlPaiement;
 
-    /** @var \DOMDocument */
-    private $domDocumentCreerPaiementSecurise;
+    /** @var CreerPaiementSecuriseRequest */
+    private $creerPaiementSecuriseRequest;
 
-    public function __construct(Client $client, string $urlEndpoint, string $urlPaiement, string $xmlBodyCreerPaiementSecurise, string $xmlBodyRecupererDetailPaiementSecurise)
+    /** @var RecupererDetailPaiementSecuriseRequest */
+    private $recupererDetailPaiementSecuriseRequest;
+
+    public function __construct(
+        Client $client, 
+        string $urlEndpoint, 
+        string $urlPaiement, 
+        CreerPaiementSecuriseRequest $creerPaiementSecuriseRequest, 
+        RecupererDetailPaiementSecuriseRequest $recupererDetailPaiementSecuriseRequest
+        )
     {
         $this->client = $client;
         $this->urlEndpoint = $urlEndpoint;
         $this->urlPaiement = $urlPaiement;
-        $this->domDocumentCreerPaiementSecurise = $this->stringToDOMDocument($xmlBodyCreerPaiementSecurise);
-        $this->domDocumentRecupererDetailPaiementSecurise = $this->stringToDOMDocument($xmlBodyRecupererDetailPaiementSecurise);
+        $this->creerPaiementSecuriseRequest = $creerPaiementSecuriseRequest;
+        $this->recupererDetailPaiementSecuriseRequest = $recupererDetailPaiementSecuriseRequest;
     }
 
     public function setConfig(string $clientNumber, string $environment): void 
@@ -63,21 +75,29 @@ final class PayfipApi
 
         $idOp = null;
 
-        $body = $this->prepareCreerPaiementSecurise($request, $notifyToken);
+        $this->creerPaiementSecuriseRequest->populate($this->clientNumber, $this->environment, $request, $notifyToken);
+
+        $body = $this->creerPaiementSecuriseRequest->getXml();
 
         try {
 
             $response = $this->client->post($this->urlEndpoint, ['body' => $body]);
 
-            $xmlResponse = $this->stringToDOMDocument($response->getBody()->getContents());
+            $xmlResponse = (new XmlModel($response->getBody()->getContents()))->getDomDocument();
 
             $idOp = $xmlResponse->getElementsByTagName('idOp')->item(0)->nodeValue;
 
         } catch (RequestException $e) {
+
             if( null !== $e->getResponse() ) {
+
                 throw new PayfipApiException($e->getResponse()->getBody()->getContents(), $e->getCode());
+
             } else {
+
+
                 throw new \Exception($e->getMessage(), $e->getCode());
+
             }
         }
 
@@ -85,42 +105,20 @@ final class PayfipApi
 
     }
 
-    private function prepareCreerPaiementSecurise(Capture $request, TokenInterface $notifyToken): string
-    {
-
-        /** @var TokenInterface $token */
-        $token = $request->getToken();
-
-        /** @var SyliusPaymentInterface $payment */
-        $payment = $request->getModel();
-
-        $xml = $this->domDocumentCreerPaiementSecurise->cloneNode(true);
-
-        $xml->getElementsByTagName('exer')->item(0)->nodeValue = date('Y');
-        $xml->getElementsByTagName('mel')->item(0)->nodeValue = $payment->getOrder()->getCustomer()->getEmail();
-        $xml->getElementsByTagName('montant')->item(0)->nodeValue = $payment->getAmount();
-        $xml->getElementsByTagName('numcli')->item(0)->nodeValue = $this->clientNumber;
-        $xml->getElementsByTagName('refdet')->item(0)->nodeValue = $payment->getOrder()->getNumber();
-        $xml->getElementsByTagName('saisie')->item(0)->nodeValue = $this->environment;
-        $xml->getElementsByTagName('urlnotif')->item(0)->nodeValue = $notifyToken->getTargetUrl();
-        $xml->getElementsByTagName('urlredirect')->item(0)->nodeValue = $token->getAfterUrl();
-
-        return $xml->saveXML();
-
-    }
-
-    public function recupererDetailPaiementSecurise(string $idOp): string
+    public function recupererDetailPaiementSecurise(string $idOp): ?string
     {
 
         $staus = null;
 
-        $body = $this->prepareRecupererDetailPaiementSecurise($idOp);
+        $this->recupererDetailPaiementSecuriseRequest->populate($idOp);
+
+        $body = $this->recupererDetailPaiementSecuriseRequest->getXml();
 
         try {
 
             $response = $this->client->post($this->urlEndpoint, ['body' => $body]);
 
-            $xmlResponse = $this->stringToDOMDocument($response->getBody()->getContents());
+            $xmlResponse = (new XmlModel($response->getBody()->getContents()))->getDomDocument();
 
             $staus = $xmlResponse->getElementsByTagName('resultrans')->item(0)->nodeValue;
             
@@ -147,35 +145,9 @@ final class PayfipApi
 
     }
 
-    private function prepareRecupererDetailPaiementSecurise($idop): string
-    {
-
-        $xml = $this->domDocumentRecupererDetailPaiementSecurise->cloneNode(true);
-
-        $xml->getElementsByTagName('idOp')->item(0)->nodeValue = $idop;
-
-        return $xml->saveXML();
-
-    }
-
     public function generateUrlPaiement(string $idop): string
     {
         return $this->urlPaiement . $idop;  
-    }
-
-    private function stringToDOMDocument($text): \DOMDocument
-    {
-
-        $xml = new \DOMDocument();
-
-        if ( @$xml->loadXML($text) === false ) {
-            
-            throw new \Exception('Invalid xml data : ' . $text);
-
-        } 
-        
-        return $xml;
-
     }
 
 }

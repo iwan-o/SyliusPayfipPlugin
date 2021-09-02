@@ -36,6 +36,18 @@ services:
         tags:
             - { name: payum.action, factory: bouteg_payfip_payment, alias: payum.action.status }
 
+    bouteg.bouteg_payfip_payment.payfip_api_model.creer_paiement_securise_request:
+        class: Bouteg\PayfipPlugin\Bridge\Models\CreerPaiementSecuriseRequest
+        public: true
+        arguments:
+            - "%bouteg_payfip.xml_body_creerPaiementSecurise%"
+
+    bouteg.bouteg_payfip_payment.payfip_api_model.recuperer_detail_paiement_securise_request:
+        class: Bouteg\PayfipPlugin\Bridge\Models\RecupererDetailPaiementSecuriseRequest
+        public: true
+        arguments:
+            - "%bouteg_payfip.xml_body_recupererDetailPaiementSecurise%"
+
     bouteg.bouteg_payfip_payment.payfip_api_bridge:
         class: Bouteg\PayfipPlugin\Bridge\PayfipApi
         public: true
@@ -43,5 +55,5 @@ services:
             - "@sylius.http_client"
             - "%bouteg_payfip.url_api_endpoint%"
             - "%bouteg_payfip.url_api_paiement%"
-            - "%bouteg_payfip.xml_body_creerPaiementSecurise%"
-            - "%bouteg_payfip.xml_body_recupererDetailPaiementSecurise%"
+            - "@bouteg.bouteg_payfip_payment.payfip_api_model.creer_paiement_securise_request"
+            - "@bouteg.bouteg_payfip_payment.payfip_api_model.recuperer_detail_paiement_securise_request"
