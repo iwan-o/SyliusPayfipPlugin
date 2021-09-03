@@ -21,9 +21,11 @@ interface PayfipApiInterface
     public const DETAILS_STATUS = 'status';
 
     public const STATUS_CREATED = 'C';
-    public const STATUS_PAID = 'P';
-    public const STATUS_CANCELED = 'A';
-    public const STATUS_FAILED = 'R';
+    public const STATUS_PAID_CB = 'P';
+    public const STATUS_PAID_DIRECT_DEBIT = 'V';
+    public const STATUS_CANCELED_CB = 'A';
+    public const STATUS_FAILED_CB = 'R';
+    public const STATUS_FAILED_DIRECT_DEBIT = 'Z';
 
     public function __construct(
         Client $client, 
