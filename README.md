@@ -1,4 +1,4 @@
-<h1 align="center">Bouteg Payfip Plugin</h1>
+<h1 align="center">Payfip Sylius plugin</h1>
 
 <p align="center">DGFIP Payfip payment plugin for Sylius applications.</p>
 
