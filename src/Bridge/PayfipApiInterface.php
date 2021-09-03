@@ -12,7 +12,7 @@ use Payum\Core\Security\TokenInterface;
 
 interface PayfipApiInterface
 {
-    public const STORAGE_BOOLEAN = 'boolean';
+
     public const ENV_TEST = 'T';
     public const ENV_ACTIVATION = 'X';
     public const ENV_PRODUCTION = 'W';
