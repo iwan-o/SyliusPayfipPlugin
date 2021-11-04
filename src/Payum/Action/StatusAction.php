@@ -46,19 +46,19 @@ final class StatusAction implements ActionInterface
         }
 
         if (PayfipApiInterface::STATUS_FAILED_CB === $details[PayfipApiInterface::DETAILS_STATUS]) {
-            $request->markFailed();
+           $request->markNew();
 
             return;
         }
 
         if (PayfipApiInterface::STATUS_FAILED_DIRECT_DEBIT === $details[PayfipApiInterface::DETAILS_STATUS]) {
-            $request->markFailed();
+           $request->markNew();
 
             return;
         }
 
         if (PayfipApiInterface::STATUS_CANCELED_CB === $details[PayfipApiInterface::DETAILS_STATUS]) {
-            $request->markCanceled();
+           $request->markNew();
 
             return;
         }
