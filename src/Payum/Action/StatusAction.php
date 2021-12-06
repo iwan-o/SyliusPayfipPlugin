@@ -28,7 +28,7 @@ final class StatusAction implements ActionInterface
         }
 
         if (PayfipApiInterface::STATUS_CREATED === $details[PayfipApiInterface::DETAILS_STATUS]) {
-            $request->markPending();
+            $request->markNew();
 
             return;
         }
